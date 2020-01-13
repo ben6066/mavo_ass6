@@ -5,6 +5,7 @@ int isKeyInDictionary(Dictionary* d, int key);
 
 Dictionary* initDictionary()
 {
+	//Allocating a dictionary struct
 	Dictionary* dictionary = (Dictionary*)malloc(sizeof(Dictionary));
 
 	if (dictionary == NULL)
@@ -90,39 +91,6 @@ Result putInDictionary(Dictionary* d, int key, int value)
 		return SUCEESS;
 	}
 
-	//Insertion sort
-	for (int i = 0; i < d->size; i++)
-	{
-		if (d->dic[i].key > var.key)
-		{
-			Element* backup = d->dic;
-
-			d->dic = realloc(d->dic, sizeof(Element) * (d->size + 1));
-
-			//Case realloc failed
-			if (d->dic == NULL)
-			{
-				//free(backup); - check with eyal
-				printf("Malloc has failed\n");
-				d->dic = backup;
-				return MEM_ERROR;
-			}
-
-			//backup = NULL; - check with eyal
-
-			d->size++;
-
-			for (int j = d->size - 1; j > i; j--)
-			{
-				d->dic[j] = d->dic[j - 1];
-			}
-
-			d->dic[i] = var;
-
-			return SUCEESS;
-		}
-	}
-
 	Element* backup = d->dic;
 
 	d->dic = realloc(d->dic, sizeof(Element) * (d->size + 1));
@@ -136,7 +104,23 @@ Result putInDictionary(Dictionary* d, int key, int value)
 		return MEM_ERROR;
 	}
 
-	//backup = NULL; - check with eyal
+	//Insertion sort
+	for (int i = 0; i < d->size; i++)
+	{
+		if (d->dic[i].key > var.key)
+		{
+			d->size++;
+
+			for (int j = d->size - 1; j > i; j--)
+			{
+				d->dic[j] = d->dic[j - 1];
+			}
+
+			d->dic[i] = var;
+
+			return SUCEESS;
+		}
+	}
 
 	d->size++;
 
