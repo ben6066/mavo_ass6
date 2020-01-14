@@ -144,6 +144,10 @@ Result putInDictionary(Dictionary* d, int key, int value)
 		}
 	}
 
+	/*Case the new element's key is bigger than any of the others
+	  Promote size with 1
+	  Insert the new element in the last spot of the array
+	*/
 	d->size++;
 
 	d->dic[d->size - 1] = var;
