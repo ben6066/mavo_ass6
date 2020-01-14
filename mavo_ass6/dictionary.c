@@ -5,21 +5,26 @@ int isKeyInDictionary(Dictionary* d, int key);
 
 Dictionary* initDictionary()
 {
-	//Allocating a dictionary struct
+	//Allocate a dictionary struct
 	Dictionary* dictionary = (Dictionary*)malloc(sizeof(Dictionary));
 
+	//Case malloc failed
 	if (dictionary == NULL)
 	{
 		printf("Malloc has failed in 'initDictionary'\n");
 		return NULL;
 	}
 
+	//Set default size as 0
 	dictionary->size = 0;
 
+	//Allocate Element's array
 	dictionary->dic = (Element*)malloc(sizeof(Element));
 
+	//Case malloc failed
 	if (dictionary->dic == NULL)
 	{
+		//Free the struct allocated
 		free(dictionary);
 		printf("Malloc has failed in 'initDictionary'\n");
 	}
@@ -29,13 +34,17 @@ Dictionary* initDictionary()
 
 void destroyDictionary(Dictionary* d)
 {
+	//Check there's something to free
 	if (d != NULL)
 	{
+		//Check if an array of elements has been allocated
 		if (d->dic != NULL)
 		{
+			//Free the array
 			free(d->dic);
 		}
 
+		//Free the struct allocated
 		free(d);
 		return;
 	}
@@ -48,14 +57,16 @@ int sizeOfDictionary(Dictionary* d)
 
 int isKeyInDictionary(Dictionary* d, int key)
 {
+	//Declaration of a flag with default value -1(key isn't in dictionary)
 	int inDic = -1;
 
+	//The array is empty so the key isn't in dictionary
 	if (d->size == 0)
 	{
-		//Return -1 in case key isn't in dictionary
 		return inDic;
 	}
 
+	//Check each element's key until found or not found at all
 	for (int i = 0; i < d->size && inDic == -1; i++)
 	{
 		if (d->dic[i].key == key)
@@ -70,20 +81,23 @@ int isKeyInDictionary(Dictionary* d, int key)
 
 Result putInDictionary(Dictionary* d, int key, int value)
 {
+	//If key is in dictionary, isKeyInDic holds the key's index, if not it holds -1
 	int isKeyInDic = isKeyInDictionary(d, key);
 
+	//If key is in dictionary, just repalce it's value and return Sucess
 	if (isKeyInDic != -1)
 	{
 		d->dic[isKeyInDic].value = value;
 		return SUCEESS;
 	}
 
-	//Create var
+	//Create a new element
 	Element var;
 	var.key = key;
 	var.value = value;
 
-	//If we insert the first var
+	
+	//Case array is empty - enter the element and promote size with 1 - return Sucess
 	if (d->size == 0)
 	{
 		d->dic[d->size] = var;
@@ -91,6 +105,10 @@ Result putInDictionary(Dictionary* d, int key, int value)
 		return SUCEESS;
 	}
 
+	/*Case array isn't empty, expand the array with realloc
+	  Declare a backup pointer in case realloc failes
+	  Try to expand array's size by 1 (size of Element)
+	*/
 	Element* backup = d->dic;
 
 	d->dic = realloc(d->dic, sizeof(Element) * (d->size + 1));
@@ -104,18 +122,22 @@ Result putInDictionary(Dictionary* d, int key, int value)
 		return MEM_ERROR;
 	}
 
-	//Insertion sort
+	//Insertion sort - make sure all of the elements entered to the dictionary are sorted
 	for (int i = 0; i < d->size; i++)
 	{
+		//Case an element with a bigger key than the new element's key is found
 		if (d->dic[i].key > var.key)
 		{
+			//Promote size with 1
 			d->size++;
 
+			//Move all of the elements from the element found 1 to the right
 			for (int j = d->size - 1; j > i; j--)
 			{
 				d->dic[j] = d->dic[j - 1];
 			}
 
+			//Insert the new element in the place the bigger element's key is found
 			d->dic[i] = var;
 
 			return SUCEESS;
